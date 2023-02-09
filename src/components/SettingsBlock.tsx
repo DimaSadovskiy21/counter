@@ -3,26 +3,18 @@ import { BlockType } from '../Types/BlockType';
 import { SuperButton } from './SuperButton';
 import { SuperInput } from './SuperInput';
 import styles from './styles.module.css';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
+import { setSettings } from '../store/reducers/counterSlice';
 
-type SettingsBlockType = {
-  setMaxValue: (maxValue: number) => void;
-  setStartValue: (startValue: number) => void;
-};
-
-export const SettingsBlock: React.FC<BlockType & SettingsBlockType> = ({
-  maxValue,
-  startValue,
-  setCounter,
+export const SettingsBlock: React.FC<BlockType> = ({
   typeCounter,
-  setMaxValue,
-  setStartValue,
   open,
   setOpen,
 }) => {
+  const {startValue, maxValue} = useAppSelector(state => state.counterReducer);
+  const dispatch = useAppDispatch();
   const setToLocalStorageHandler = () => {
-    setCounter(startValue);
-    localStorage.setItem('maxValue', JSON.stringify(maxValue));
-    localStorage.setItem('startValue', JSON.stringify(startValue));
+    dispatch(setSettings({startValue, maxValue}));
     setOpen(!open);
   };
 
@@ -31,19 +23,12 @@ export const SettingsBlock: React.FC<BlockType & SettingsBlockType> = ({
 
   return (
     <div className={styles.Block}>
-      <SuperInput
-        title="max value"
-        value={maxValue}
-        setValue={setMaxValue}
-        setCounter={setCounter}
-      />
-      <SuperInput
-        title="start value"
-        value={startValue}
-        setValue={setStartValue}
-        setCounter={setCounter}
-      />
-      <SuperButton style={{width: '300px'}} disabled={isDisabled} handler={setToLocalStorageHandler}>
+      <SuperInput type="max" title="max value" />
+      <SuperInput type="min" title="start value" />
+      <SuperButton
+        style={{ width: '300px' }}
+        disabled={isDisabled}
+        handler={setToLocalStorageHandler}>
         Set
       </SuperButton>
     </div>

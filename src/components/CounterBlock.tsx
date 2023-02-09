@@ -2,6 +2,8 @@ import React from 'react';
 import { SuperButton } from './SuperButton';
 import styles from './styles.module.css';
 import { BlockType } from '../Types/BlockType';
+import { incrementCounter, setCounter } from '../store/reducers/counterSlice';
+import { useAppDispatch, useAppSelector } from '../hooks/redux';
 
 type CounterBlockType = {
   counter: string | number;
@@ -9,19 +11,19 @@ type CounterBlockType = {
 
 export const CounterBlock: React.FC<BlockType & CounterBlockType> = ({
   counter,
-  maxValue,
-  startValue,
-  setCounter,
   typeCounter,
   open,
   setOpen,
 }) => {
+  const { startValue, maxValue } = useAppSelector((state) => state.counterReducer);
+  const dispatch = useAppDispatch();
+
   const onClickIncrementHandler = () => {
-    setCounter(+counter + 1);
+    dispatch(incrementCounter());
   };
 
   const onClickResetHandler = () => {
-    setCounter(startValue);
+    dispatch(setCounter(startValue));
   };
 
   const onClickSettingsHandler = () => {
@@ -34,7 +36,6 @@ export const CounterBlock: React.FC<BlockType & CounterBlockType> = ({
     (isDisabled || typeCounter ? ' ' + styles.counterDisabled : '');
 
   const counterView = isDisabled ? <span>incorect number</span> : <span>{counter}</span>;
-
 
   return (
     <div className={styles.Block}>
